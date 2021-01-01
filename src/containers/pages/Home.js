@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { withRouter } from 'react-router-dom'
 import styled from 'styled-components'
+import Logo from '../../assets/logo.svg'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import useUserContext from '../../utils/useUserContext'
@@ -15,6 +16,7 @@ const HomeWrapper = styled.div`
 `
 
 const FormWrapper = styled.div`
+  background: #fff;
   border: 5px solid #00adb5;
   border-radius: 10px;
   width: 300px;
@@ -43,6 +45,11 @@ const StyledTitle = styled.h1`
   }
 `
 
+const StyledLogo = styled.img`
+  width: 150px;
+  margin: auto;
+`
+
 const Home = ({ history }) => {
   const { username, setUsername } = useUserContext()
 
@@ -56,6 +63,7 @@ const Home = ({ history }) => {
     return (
       <HomeWrapper>
         <FormWrapper>
+          <StyledLogo src={Logo} alt="logo" />
           <StyledTitle>
             Hi, <span>{username}</span>.
           </StyledTitle>
@@ -76,6 +84,7 @@ const Home = ({ history }) => {
   return (
     <HomeWrapper>
       <FormWrapper>
+        <StyledLogo src={Logo} alt="logo" />
         <StyledTitle>Welcome to BS!</StyledTitle>
         <FormGroup>
           <FormLabel>Username</FormLabel>
@@ -84,6 +93,9 @@ const Home = ({ history }) => {
             value={inputUsername}
             placeholder="Enter a username with max length of 16"
             onChange={(e) => setInputUsername(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') startSheet()
+            }}
           />
         </FormGroup>
         <FormGroup>

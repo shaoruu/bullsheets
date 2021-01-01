@@ -54,6 +54,7 @@ const SheetsWrapper = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+  margin-top: 60px;
 `
 
 const SheetItem = ({ id, name }) => {

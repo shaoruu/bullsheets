@@ -62,7 +62,13 @@ const SheetRow = styled.div`
 const getCellData = (r, c) =>
   TEST_SHEET_CELLS.find((tsc) => tsc.row === r && tsc.col === c) || undefined
 
-const setupCells = (rowCount, colCount, selectedCell, focusSetter) => {
+const setupCells = (
+  rowCount,
+  colCount,
+  selectedCell,
+  setCellData,
+  focusSetter
+) => {
   const cells = []
 
   for (let i = 0; i < rowCount; i++) {
@@ -79,9 +85,9 @@ const setupCells = (rowCount, colCount, selectedCell, focusSetter) => {
             location={i + ' ' + j}
             selectedCell={selectedCell}
             focusSetter={focusSetter}
-          >
-            {j !== 0 && romanize(j)}
-          </Cell>
+            setCellData={setCellData}
+            data={j !== 0 && romanize(j)}
+          />
         )
       else if (j === 0)
         cell = (
@@ -91,9 +97,9 @@ const setupCells = (rowCount, colCount, selectedCell, focusSetter) => {
             location={i + ' ' + j}
             selectedCell={selectedCell}
             focusSetter={focusSetter}
-          >
-            {i}
-          </Cell>
+            setCellData={setCellData}
+            data={i}
+          />
         )
       else {
         const cellData = getCellData(i, j)
@@ -104,9 +110,9 @@ const setupCells = (rowCount, colCount, selectedCell, focusSetter) => {
             location={i + ' ' + j}
             selectedCell={selectedCell}
             focusSetter={focusSetter}
-          >
-            {cellData ? cellData.data : ''}
-          </Cell>
+            setCellData={setCellData}
+            data={cellData ? cellData.data : ''}
+          />
         )
       }
 
@@ -121,59 +127,47 @@ const setupCells = (rowCount, colCount, selectedCell, focusSetter) => {
 
 const Sheet = ({ id }) => {
   const [selectedCell, setSelectedCell] = useState(undefined)
-
-  const selectedCellData = selectedCell
-    ? getCellData(...selectedCell.split(' ').map((n) => parseInt(n, 10)))
-    : undefined
+  const [testCells, setTestCells] = useState(TEST_SHEET_CELLS)
 
   const scrollRef = useRef(null)
-  const inputRef = useRef(null)
 
   const [isEditing, setIsEditing] = useState(false)
-  const [inputValue, setInputValue] = useState(
-    selectedCellData ? selectedCellData.data : ''
-  )
 
   const { width, height } = useWindowSize()
-  const { y } = useScroll(scrollRef)
-
-  console.log(y)
-
-  const [offsetX, setOffsetX] = useState(0)
-  const [offsetY, setOffsetY] = useState(0)
 
   const { name } = TEST_SHEETS.find((s) => s.id === id)
 
   const rowCount = Math.ceil(height / DEFAULT_CELL_HEIGHT)
   const colCount = Math.ceil(width / DEFAULT_CELL_WIDTH)
 
-  const cells = setupCells(rowCount, colCount, selectedCell, (c) => {
-    setSelectedCell(c)
-    inputRef.current.focus()
-  })
-
   const handleSheetRename = (e) => {
     setIsEditing(false)
     TEST_SHEETS.find((ts) => ts.id === id).name = e.target.value
   }
 
-  const handleCellData = (e) => {
-    const { value } = e.target
-    const [r, c] = selectedCell.split(' ').map((n) => parseInt(n, 10))
-    const data = getCellData(r, c)
-
-    if (!data) {
-      const newData = {
+  const setCellData = (location, data) => {
+    const [r, c] = location.split(' ').map((v) => parseInt(v, 10))
+    const cell = getCellData(r, c)
+    if (cell) {
+      cell.data = data
+    } else {
+      TEST_SHEET_CELLS.push({
         row: r,
         col: c,
-        data: value
-      }
-
-      TEST_SHEET_CELLS.push(newData)
-    } else {
-      data.data = value
+        data
+      })
     }
   }
+
+  const cells = setupCells(
+    rowCount,
+    colCount,
+    selectedCell,
+    setCellData,
+    (c) => {
+      setSelectedCell(c)
+    }
+  )
 
   return (
     <SheetWrapper>
@@ -191,23 +185,6 @@ const Sheet = ({ id }) => {
             name
           )}
         </SheetTitle>
-        <EnterField>
-          <InvisibleInput
-            ref={inputRef}
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter') {
-                handleCellData(e)
-
-                inputRef.current.blur()
-
-                setInputValue('')
-                setSelectedCell(undefined)
-              }
-            }}
-          />
-        </EnterField>
       </SheetMetaForm>
       <SheetContainer ref={scrollRef}>
         {cells.map((row, i) => (
