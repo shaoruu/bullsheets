@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import styled from 'styled-components'
-import InvisibleInput from './InvisibleInput'
 
 export const DEFAULT_CELL_WIDTH = 80
 export const DEFAULT_CELL_HEIGHT = 30
@@ -9,56 +8,50 @@ const CellWrapper = styled.div`
   max-width: ${DEFAULT_CELL_WIDTH}px;
   min-width: ${DEFAULT_CELL_WIDTH}px;
   height: ${DEFAULT_CELL_HEIGHT}px;
-  border-bottom: 2px solid #22283133;
-  border-right: 2px solid #22283133;
+  border: 1px solid #22283133;
   font-size: 1.6em;
-  background: ${(p) => (p.isIndicator ? '#ccc' : '#eee')};
-  overflow: ${(p) => (p.isEditing ? 'unset' : 'hidden')};
   display: inline-flex;
   justify-content: flex-start;
   align-items: center;
+  
+  background: ${(p) => (p.isIndicator ? '#ccc' : '#eee')};
+  overflow: ${(p) => (p.isEditing ? 'unset' : 'hidden')};
   z-index: ${(p) => (p.isEditing ? '1000012312312' : '0')};
+
+  ${(p) => !p.isIndicator && 'cursor: text;'}
+  ${(p) => p.isEditing && 'border: 1px solid black;'}
 `
 
 const CellInput = styled.div`
-  /* display: inline-flex; */
   display: block;
   align-items: center;
-  background: ${(p) => (p.isIndicator ? '#ccc' : '#eee')};
-  justify-content: ${(p) => (p.isIndicator ? 'center' : 'flex-start')};
-  /* width: ${(p) => (p.isEditing ? 'fit-content' : '100%')}; */
-  min-width: 100%;
   outline: none;
   height: 100%;
-  /* overflow: auto; */
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  padding: 2px;
-
-  ${(p) => (p.data ? '' : 'width: 100%')}
-
-  &:hover {
-    background: ${(p) => (p.isIndicator ? '#ccc' : '#ddd')};
-  }
+  
+  background: ${(p) => (p.isIndicator ? '#ccc' : '#eee')};
+  justify-content: ${(p) => (p.isIndicator ? 'center' : 'flex-start')};
+  
+  ${(p) => p.isIndicator && 'min-width: 100%;'}
+  ${(p) => p.isIndicator && 'text-align: center;'}
 `
 
 const Cell = ({
   data,
   isIndicator,
   location,
-  selectedCell,
   setCellData,
-  focusSetter
 }) => {
   const inputRef = useRef(null)
 
   const [isEditing, setIsEditing] = useState(false)
-  const [inputValue, setInputValue] = useState(data)
 
   const innerHTML = data || ''
 
   return (
-    <CellWrapper isIndicator={isIndicator} isEditing={isEditing}>
+    <CellWrapper isIndicator={isIndicator} isEditing={isEditing} onClick={() => {
+      if (inputRef.current)
+        inputRef.current.focus()
+    }}>
       <CellInput
         ref={inputRef}
         data={innerHTML}
@@ -71,7 +64,11 @@ const Cell = ({
           setCellData(location, inputRef.current.innerHTML)
         }}
         onKeyPress={(e) => {
-          if (e.key === 'Enter') e.preventDefault()
+          if (e.key === 'Enter') {
+            e.preventDefault()
+            if (inputRef.current)
+              inputRef.current.blur()
+          }
         }}
       />
     </CellWrapper>

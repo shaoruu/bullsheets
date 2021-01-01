@@ -1,9 +1,9 @@
+import { useRef, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import styled from 'styled-components'
 import { TEST_SHEETS } from '../containers/pages/Sheets'
-import { useWindowSize, useScroll, useScrolling } from 'react-use'
-import Cell, { DEFAULT_CELL_HEIGHT, DEFAULT_CELL_WIDTH } from './Cell'
-import { useRef, useState } from 'react'
 import romanize from '../utils/romanize'
+import Cell, { DEFAULT_CELL_HEIGHT, DEFAULT_CELL_WIDTH } from './Cell'
 import InvisibleInput from './InvisibleInput'
 
 const TEST_SHEET_CELLS = [
@@ -65,9 +65,7 @@ const getCellData = (r, c) =>
 const setupCells = (
   rowCount,
   colCount,
-  selectedCell,
   setCellData,
-  focusSetter
 ) => {
   const cells = []
 
@@ -83,8 +81,6 @@ const setupCells = (
             key={'cell' + i + j}
             isIndicator={true}
             location={i + ' ' + j}
-            selectedCell={selectedCell}
-            focusSetter={focusSetter}
             setCellData={setCellData}
             data={j !== 0 && romanize(j)}
           />
@@ -95,8 +91,6 @@ const setupCells = (
             key={'cell' + i + j}
             isIndicator={true}
             location={i + ' ' + j}
-            selectedCell={selectedCell}
-            focusSetter={focusSetter}
             setCellData={setCellData}
             data={i}
           />
@@ -108,8 +102,6 @@ const setupCells = (
           <Cell
             key={'cell' + i + j}
             location={i + ' ' + j}
-            selectedCell={selectedCell}
-            focusSetter={focusSetter}
             setCellData={setCellData}
             data={cellData ? cellData.data : ''}
           />
@@ -126,9 +118,6 @@ const setupCells = (
 }
 
 const Sheet = ({ id }) => {
-  const [selectedCell, setSelectedCell] = useState(undefined)
-  const [testCells, setTestCells] = useState(TEST_SHEET_CELLS)
-
   const scrollRef = useRef(null)
 
   const [isEditing, setIsEditing] = useState(false)
@@ -162,11 +151,7 @@ const Sheet = ({ id }) => {
   const cells = setupCells(
     rowCount,
     colCount,
-    selectedCell,
     setCellData,
-    (c) => {
-      setSelectedCell(c)
-    }
   )
 
   return (
@@ -182,8 +167,8 @@ const Sheet = ({ id }) => {
               onBlur={handleSheetRename}
             />
           ) : (
-            name
-          )}
+              name
+            )}
         </SheetTitle>
       </SheetMetaForm>
       <SheetContainer ref={scrollRef}>
