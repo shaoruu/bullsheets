@@ -1,0 +1,20 @@
+type Cell {
+  id: ID!
+  row: Int!
+  col: Int!
+  data: String!
+  sheet: Sheet!
+}
+
+type CellSubscriptionPayload {
+  mutation: MutationType!
+  data: Cell!
+}
+
+input UpsertCellInput {
+  id: ID
+  row: Int!
+  col: Int!
+  data: String!
+  sheet: ID!
+}

@@ -1,0 +1,27 @@
+# import { MutationType } from './shared.graphql'
+
+type Sheet {
+  id: ID!
+  name: String!
+  cells: [Cell!]!
+  lastChangedBy: String
+}
+
+type SheetSubscriptionPayload {
+  mutation: MutationType!
+  data: Sheet!
+}
+
+input CreateSheetInput {
+  name: String!
+}
+
+input UpdateSheetInput {
+  id: ID!
+  name: String
+  lastChangedBy: String
+}
+
+input DeleteSheetInput {
+  id: ID!
+}

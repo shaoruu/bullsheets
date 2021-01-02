@@ -1,0 +1,20 @@
+# import { Sheet, CreateSheetInput, UpdateSheetInput, DeleteSheetInput, SheetSubscriptionPayload } from './schemas/sheet.graphql'
+# import { Cell, UpsertCellInput } from './schemas/cell.graphql'
+
+type Query {
+  sheet(id: ID!): Sheet
+  sheets: [Sheet!]!
+}
+
+type Mutation {
+  createSheet(data: CreateSheetInput!): Sheet!
+  updateSheet(data: UpdateSheetInput!): Sheet!
+  deleteSheet(data: DeleteSheetInput!): Sheet!
+
+  upsertCell(data: UpsertCellInput!): Cell!
+}
+
+type Subscription {
+  sheet: SheetSubscriptionPayload!
+  cell(sheetId: ID!): CellSubscriptionPayload!
+}
