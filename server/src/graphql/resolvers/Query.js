@@ -6,7 +6,7 @@ const Query = {
   },
   sheets() {
     return SheetModel.find()
-  },
+  }
 }
 
 export default Query

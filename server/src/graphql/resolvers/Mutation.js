@@ -18,7 +18,6 @@ const Mutation = {
   async upsertCell(_, { data }) {
     const { sheet } = data
 
-
     if (!data.id) {
       const cell = await CellModel.findOne(
         {

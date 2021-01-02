@@ -1,18 +1,20 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose'
 
 const sheetSchema = new Schema({
   name: {
     type: String,
     required: true
   },
-  cells: [{
-    type: Schema.Types.ObjectId,
-    ref: 'Cell'
-  }],
+  cells: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Cell'
+    }
+  ],
   lastChangedBy: {
     type: String,
     default: ''
   }
-});
+})
 
-export default model("Sheet", sheetSchema);
+export default model('Sheet', sheetSchema)

@@ -16,7 +16,7 @@ const server = new GraphQLServer({
     Mutation,
     Subscription,
     Cell,
-    Sheet,
+    Sheet
   },
   context: {
     pubsub

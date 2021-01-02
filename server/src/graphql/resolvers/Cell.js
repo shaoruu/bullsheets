@@ -6,4 +6,4 @@ const Cell = {
   }
 }
 
-export default Cell 
+export default Cell

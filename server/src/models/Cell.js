@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema } from 'mongoose'
 
 const cellSchema = new Schema({
   row: {
@@ -25,6 +25,6 @@ const cellSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Sheet'
   }
-});
+})
 
-export default model("Cell", cellSchema);
+export default model('Cell', cellSchema)
