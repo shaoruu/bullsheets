@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,9 +12,29 @@ import Sheets from './pages/Sheets'
 import NavBar from '../components/NavBar'
 import useUserContext from '../utils/useUserContext'
 
-const App = () => {
+const PrivateRoute = ({ children, ...rest }) => {
   const { username } = useUserContext()
 
+  return (
+    <Route
+      {...rest}
+      render={(props) =>
+        username ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/',
+              state: { from: props.location }
+            }}
+          />
+        )
+      }
+    />
+  )
+}
+
+const App = () => {
   return (
     <Router>
       <NavBar />
@@ -21,16 +42,12 @@ const App = () => {
         <Route exact path="/">
           <Home />
         </Route>
-        {username && (
-          <>
-            <Route path="/sheets">
-              <Sheets />
-            </Route>
-            <Route path="/edit/:id">
-              <Edit />
-            </Route>
-          </>
-        )}
+        <PrivateRoute path="/sheets">
+          <Sheets />
+        </PrivateRoute>
+        <PrivateRoute path="/edit/:id">
+          <Edit />
+        </PrivateRoute>
         <Redirect to="/" />
       </Switch>
     </Router>

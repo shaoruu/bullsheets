@@ -11,6 +11,12 @@ type CellSubscriptionPayload {
   data: Cell!
 }
 
+type FocusSubscriptionPayload {
+  row: Int!
+  col: Int!
+  username: String!
+}
+
 input UpsertCellInput {
   id: ID
   row: Int!

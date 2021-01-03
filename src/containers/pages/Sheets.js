@@ -1,6 +1,11 @@
+import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { BiSpreadsheet } from 'react-icons/bi'
+import { useQuery } from '@apollo/client'
+import { SHEETS_QUERY, SHEET_SUBSCRIPTION } from '../../graphql'
+import Button from '../../components/Button'
+import Input from '../../components/Input'
 
 export const TEST_SHEETS = [
   {
@@ -37,7 +42,7 @@ const SheetWrapper = styled(Link)`
   text-decoration: none;
 
   &:hover {
-    transform: scale(1.01);
+    border-color: #393e4666;
   }
 `
 
@@ -57,6 +62,12 @@ const SheetsWrapper = styled.div`
   margin-top: 60px;
 `
 
+const FormGroup = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`
+
 const SheetItem = ({ id, name }) => {
   return (
     <SheetWrapper to={'/edit/' + id}>
@@ -70,11 +81,60 @@ const SheetItem = ({ id, name }) => {
 }
 
 const Sheets = () => {
+  const results =  useQuery(SHEETS_QUERY)
+  
+  const { loading, error, data, subscribeToMore } =results || {}
+
+  useEffect(() => {
+    const unsubscribe = subscribeToMore?.({
+      document: SHEET_SUBSCRIPTION,
+      updateQuery(prev, { subscriptionData }) {
+        if (!subscriptionData.data) return prev
+  
+        const {
+          data: {
+            sheet: { mutation, data }
+          }
+        } = subscriptionData
+  
+        const sheets = [...prev.sheets]
+  
+        switch (mutation) {
+          case 'CREATED':
+            sheets.push(data)
+            return Object.assign({}, prev, {
+              sheets: [...prev.sheets, data]
+            })
+          case 'UPDATED':
+            break
+          default:
+            break
+        }
+  
+        return prev
+      }
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Something went wrong...</p>
+
+  const { sheets } = data
+
   return (
     <SheetsWrapper>
-      {TEST_SHEETS.map(({ id, name }, i) => (
+      {sheets.map(({ id, name }, i) => (
         <SheetItem key={i} id={id} name={name}></SheetItem>
       ))}
+      <FormGroup>
+        <Input />
+        afdasdfsadfasdfsadfasfasdfaskdjfhlalskjdfhaskldjfhasdfasdf
+        <Button>ADD</Button>
+      </FormGroup>
     </SheetsWrapper>
   )
 }
